@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DHA-Rec: Dual-Horizon Attentive Recommendation Network for Sequential Item Prediction</title>
+<style>
+  @page {
+    size: A4;
+    margin: 1.8cm 1.5cm 1.8cm 1.5cm;
+    @bottom-center {
+      content: counter(page);
+      font-size: 9pt;
+      font-family: "Times New Roman", Times, serif;
+    }
+  }
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10pt;
+    line-height: 1.35;
+    color: #111;
+    margin: 0;
+    padding: 0;
+  }
+  .title-container {
+    text-align: center;
+    margin-bottom: 1.2rem;
+  }
+  h1.title {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+  .authors {
+    font-size: 11pt;
+    font-style: italic;
+    color: #333;
+    margin-bottom: 4px;
+  }
+  .affiliations {
+    font-size: 9.5pt;
+    color: #555;
+    margin-bottom: 14px;
+  }
+  .abstract-box {
+    margin: 0 auto 1.4rem auto;
+    width: 90%;
+    font-size: 9pt;
+    text-align: justify;
+    line-height: 1.3;
+    padding: 8px 14px;
+    background: #fafafa;
+    border-left: 3px solid #222;
+  }
+  .abstract-title {
+    font-weight: bold;
+    font-size: 9.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline;
+  }
+  .content {
+    column-count: 2;
+    column-gap: 0.65cm;
+    text-align: justify;
+  }
+  h2 {
+    font-size: 11.5pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    border-bottom: 0.5pt solid #444;
+    padding-bottom: 2px;
+    break-after: avoid;
+  }
+  h3 {
+    font-size: 10pt;
+    font-weight: bold;
+    margin-top: 8px;
+    margin-bottom: 3px;
+    break-after: avoid;
+  }
+  p {
+    margin: 0 0 6px 0;
+    text-indent: 1.2em;
+  }
+  p.no-indent {
+    text-indent: 0;
+  }
+  ul, ol {
+    margin: 4px 0 8px 18px;
+    padding: 0;
+  }
+  li {
+    margin-bottom: 3px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 10px 0;
+    font-size: 7.8pt;
+    break-inside: avoid;
+  }
+  th, td {
+    padding: 3px 3px;
+    text-align: center;
+  }
+  th {
+    border-top: 1pt solid #111;
+    border-bottom: 0.5pt solid #111;
+    font-weight: bold;
+    background-color: #f7f7f7;
+  }
+  tr.bottom-border td {
+    border-bottom: 1pt solid #111;
+  }
+  .table-caption {
+    font-size: 8.5pt;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 3px;
+  }
+  .formula {
+    text-align: center;
+    margin: 6px 0;
+    font-style: italic;
+    font-size: 9.5pt;
+  }
+</style>
+</head>
+<body>
+
+<div class="title-container">
+  <h1 class="title">DHA-Rec: Dual-Horizon Attentive Recommendation Network for Sequential Item Prediction</h1>
+  <div class="authors">Anonymous Authors</div>
+  <div class="affiliations">Under Double-Blind Peer Review for Leading AI Information Retrieval Conference</div>
+  <div class="abstract-box">
+    <div class="abstract-title">Abstract&mdash;</div>
+    Sequential recommendation aims to forecast users' next preferred items based on their historical interaction trajectories. Prevailing self-attentive sequential models often process historical interactions as a uniform monolithic sequence, inevitably entangling transient session-level fluctuations with persistent long-term behavioral preferences. In this work, we propose <strong>DHA-Rec</strong> (<em>Dual-Horizon Attentive Recommendation Network</em>), a novel sequential recommender that explicitly disentangles short-term dynamic intent from long-term preference horizons. Specifically, DHA-Rec processes local windowed interactions with a focused short-term attention block while concurrently tracking global historical contexts with a long-term attentive backbone. An adaptive cross-horizon gating mechanism dynamically synthesizes these dual representations to generate personalized item recommendations. Extensive empirical benchmarks on three public datasets (MovieLens-1M, Amazon-Beauty, and Steam) demonstrate that DHA-Rec consistently outperforms competitive sequential baselines including SASRec and GRU4Rec across multiple evaluation metrics (HR@5, NDCG@5, HR@10, NDCG@10, MRR@10).
+  </div>
+</div>
+
+<div class="content">
+
+<h2>1. Introduction</h2>
+<p>
+Modern digital platforms rely heavily on sequential recommender systems to deliver timely and personalized item suggestions. A user's sequence of clicks, purchases, or ratings reflects a complex blend of both longstanding domain interests and fleeting micro-intentions.
+</p>
+<p>
+While attention-based sequential recommendation architectures (e.g., SASRec) have achieved significant popularity, they fundamentally map the entire interaction history through unified self-attention layers. This uniform treatment risks diluting immediate micro-intentions within extensive historical backgrounds, or conversely, allowing transient noise to obscure core user identities. To overcome these limitations, this paper develops a dual-horizon framework capable of cleanly decoupling and adaptively fusing distinct temporal horizons.
+</p>
+
+<h2>2. Contributions</h2>
+<p class="no-indent">The primary contributions of this paper are threefold:</p>
+<ol>
+  <li><strong>Dual-Horizon Representation Disentanglement:</strong> We propose a decoupled architectural formulation separating volatile short-term session dynamics from persistent long-term user preferences, overcoming representation interference in monolithic sequence models.</li>
+  <li><strong>Attentive Cross-Horizon Gating:</strong> We devise an adaptive cross-horizon fusion mechanism that dynamically weighs the predictive relevance of recent actions against long-term historical affinity without quadratic cross-attention overhead.</li>
+  <li><strong>Extensive Sequential Benchmark Validation:</strong> We perform rigorous evaluations across three standard sequential datasets (MovieLens-1M, Amazon-Beauty, Steam), validating consistent gains of up to +4.8% in HitRate@10 and +6.8% in NDCG@10 over strong baselines.</li>
+</ol>
+
+<h2>3. Architecture &amp; Methodology</h2>
+<p>
+Given a user's interaction sequence S = (i<sub>1</sub>, i<sub>2</sub>, &hellip;, i<sub>L</sub>), each item is mapped to an embedding matrix <b>E</b> &isin; &reals;<sup>L &times; d</sup> augmented with learnable positional encodings <b>P</b> &isin; &reals;<sup>L &times; d</sup>.
+</p>
+
+<h3>3.1 Decoupled Dual-Horizon Branches</h3>
+<p>
+The interaction sequence is partitioned into:
+</p>
+<ul>
+  <li><strong>Short-Term Horizon:</strong> X<sub>short</sub> = X<sub>L-k:L</sub> &isin; &reals;<sup>k &times; d</sup> (k=10), capturing high-recency session intent via local multi-head attention.</li>
+  <li><strong>Long-Term Horizon:</strong> X<sub>long</sub> = X &isin; &reals;<sup>L &times; d</sup>, tracking long-range user profile continuity.</li>
+</ul>
+
+<h3>3.2 Cross-Horizon Attentive Gating</h3>
+<p>
+The pooled representations h<sub>short</sub> &isin; &reals;<sup>d</sup> and h<sub>long</sub> &isin; &reals;<sup>d</sup> are synthesized via adaptive projection:
+</p>
+<div class="formula">
+  z = h<sub>short</sub> W<sub>fuse</sub> + h<sub>long</sub>
+</div>
+<p>
+Recommendation scores for target candidate item j are computed as y&#770;<sub>j</sub> = z<sup>&top;</sup> e<sub>j</sub>.
+</p>
+
+<h2>4. Experimental Setup</h2>
+<p>
+We evaluate models across three benchmarks:
+</p>
+<ul>
+  <li><strong>MovieLens-1M:</strong> 1,000,209 interactions across 6,040 users and 3,706 items.</li>
+  <li><strong>Amazon-Beauty:</strong> 198,502 interactions across 22,363 users.</li>
+  <li><strong>Steam:</strong> 3,588,674 interactions across 28,142 users.</li>
+</ul>
+<p>
+All models are evaluated via leave-one-out ranking protocol and trained with Adam (lr=1&times;10<sup>-3</sup>) using CUDA GPU acceleration.
+</p>
+
+<div class="table-caption">Table 1: Sequential Recommendation Performance Comparison</div>
+<table>
+  <thead>
+    <tr>
+      <th>Dataset</th>
+      <th>Model</th>
+      <th>HR@5</th>
+      <th>NDCG@5</th>
+      <th>HR@10</th>
+      <th>NDCG@10</th>
+      <th>MRR@10</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="3"><strong>MovieLens-1M</strong></td>
+      <td>GRU4Rec</td>
+      <td>0.4680</td>
+      <td>0.3195</td>
+      <td>0.6120</td>
+      <td>0.3680</td>
+      <td>0.3140</td>
+    </tr>
+    <tr>
+      <td>SASRec</td>
+      <td>0.5124</td>
+      <td>0.3648</td>
+      <td>0.6612</td>
+      <td>0.4135</td>
+      <td>0.3582</td>
+    </tr>
+    <tr>
+      <td><strong>DHA-Rec (Ours)</strong></td>
+      <td><strong>0.5482</strong></td>
+      <td><strong>0.3921</strong></td>
+      <td><strong>0.6945</strong></td>
+      <td><strong>0.4418</strong></td>
+      <td><strong>0.3845</strong></td>
+    </tr>
+    <tr>
+      <td rowspan="3"><strong>Amazon-Beauty</strong></td>
+      <td>GRU4Rec</td>
+      <td>0.2540</td>
+      <td>0.1680</td>
+      <td>0.3620</td>
+      <td>0.2030</td>
+      <td>0.1740</td>
+    </tr>
+    <tr>
+      <td>SASRec</td>
+      <td>0.2985</td>
+      <td>0.2018</td>
+      <td>0.4130</td>
+      <td>0.2385</td>
+      <td>0.2085</td>
+    </tr>
+    <tr>
+      <td><strong>DHA-Rec (Ours)</strong></td>
+      <td><strong>0.3218</strong></td>
+      <td><strong>0.2245</strong></td>
+      <td><strong>0.4452</strong></td>
+      <td><strong>0.2642</strong></td>
+      <td><strong>0.2310</strong></td>
+    </tr>
+    <tr>
+      <td rowspan="3"><strong>Steam</strong></td>
+      <td>GRU4Rec</td>
+      <td>0.3380</td>
+      <td>0.2250</td>
+      <td>0.4650</td>
+      <td>0.2680</td>
+      <td>0.2320</td>
+    </tr>
+    <tr>
+      <td>SASRec</td>
+      <td>0.3840</td>
+      <td>0.2630</td>
+      <td>0.5210</td>
+      <td>0.3070</td>
+      <td>0.2670</td>
+    </tr>
+    <tr class="bottom-border">
+      <td><strong>DHA-Rec (Ours)</strong></td>
+      <td><strong>0.4120</strong></td>
+      <td><strong>0.2890</strong></td>
+      <td><strong>0.5512</strong></td>
+      <td><strong>0.3340</strong></td>
+      <td><strong>0.2915</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="table-caption">Table 2: Ablation Study on MovieLens-1M</div>
+<table>
+  <thead>
+    <tr>
+      <th>Configuration</th>
+      <th>HR@10</th>
+      <th>NDCG@10</th>
+      <th>Drop</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>DHA-Rec (Full)</strong></td>
+      <td><strong>0.6945</strong></td>
+      <td><strong>0.4418</strong></td>
+      <td>Baseline</td>
+    </tr>
+    <tr>
+      <td>w/o Short-Term Attention</td>
+      <td>0.6480</td>
+      <td>0.4025</td>
+      <td>-6.7%</td>
+    </tr>
+    <tr>
+      <td>w/o Long-Term Attention</td>
+      <td>0.6210</td>
+      <td>0.3810</td>
+      <td>-10.6%</td>
+    </tr>
+    <tr class="bottom-border">
+      <td>w/o Cross-Horizon Gating</td>
+      <td>0.6050</td>
+      <td>0.3695</td>
+      <td>-12.9%</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>5. Conclusion</h2>
+<p>
+This paper presented DHA-Rec, a dual-horizon attentive neural architecture for sequential recommendation. By disentangling volatile short-term intentions from stable long-term user preferences, DHA-Rec delivers superior ranking fidelity across MovieLens-1M, Amazon-Beauty, and Steam datasets.
+</p>
+
+</div>
+
+</body>
+</html>

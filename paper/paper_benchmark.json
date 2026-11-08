@@ -1,0 +1,6 @@
+{
+  "title": "DHA-Rec: Dual-Horizon Attentive Recommendation Network for Sequential Item Prediction",
+  "task": "Sequential Recommendation",
+  "benchmarks": ["MovieLens-1M", "Amazon-Beauty", "Steam"],
+  "metrics": ["HR@5", "NDCG@5", "HR@10", "NDCG@10", "MRR@10"]
+}
