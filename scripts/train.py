@@ -47,6 +47,13 @@ def main():
 
     data_path = os.path.join(args.data_dir, f"{args.dataset}.txt")
     if not os.path.exists(data_path):
+        try:
+            from data.download_data import generate_benchmark_data
+            os.makedirs(args.data_dir, exist_ok=True)
+            generate_benchmark_data(args.dataset, data_path)
+        except Exception:
+            pass
+    if not os.path.exists(data_path):
         raise FileNotFoundError(f"Missing {data_path}. Please execute bash scripts/download_data.sh first.")
 
     train_dataset = SequentialRecDataset(data_path, max_len=args.max_len, split="train")

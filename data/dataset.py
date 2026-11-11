@@ -13,6 +13,15 @@ class SequentialRecDataset(Dataset):
         self.num_neg = num_neg
 
         if not os.path.exists(data_path):
+            try:
+                from .download_data import generate_benchmark_data
+                dataset_name = os.path.splitext(os.path.basename(data_path))[0]
+                os.makedirs(os.path.dirname(data_path) or ".", exist_ok=True)
+                generate_benchmark_data(dataset_name, data_path)
+            except Exception:
+                pass
+
+        if not os.path.exists(data_path):
             raise FileNotFoundError(f"Data file '{data_path}' not found! Run scripts/download_data.sh first.")
 
         self.user_seqs = {}
